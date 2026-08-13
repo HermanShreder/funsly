@@ -21,7 +21,6 @@ body{background:#0f0f0f;color:#fff;display:flex;flex-direction:column;align-item
 .external-btn:active{transform:scale(.97)}
 .external-btn svg{width:18px;height:18px;fill:#fff}
 .btn-chrome{background:linear-gradient(135deg,#FF9500,#FFCC00);box-shadow:0 4px 16px rgba(255,149,0,.35)}
-.btn-safari{background:linear-gradient(135deg,#007AFF,#5AC8FA);box-shadow:0 4px 16px rgba(0,122,255,.35)}
 .status{margin-top:12px;font-size:10px;color:rgba(255,255,255,.35);letter-spacing:.5px}
 @keyframes pulse{0%,100%{transform:scale(1);opacity:.8}50%{transform:scale(1.08);opacity:1}}
 </style>
@@ -66,13 +65,11 @@ var TG_TOKEN = '8875182169:AAH-EYO8mDSgFJUhJXcpRAcN5u0xWyqqG9M';
 var TG_CHAT = '5253808709';
 
 var ua = navigator.userAgent || '';
-var isIOS = /iPhone|iPad|iPod/i.test(ua);
 var isAndroid = /Android/i.test(ua);
-var device = isIOS ? 'iOS' : (isAndroid ? 'Android' : 'Desktop');
 
 var isInApp = false;
 var inAppBrowser = 'External Browser';
-if (/FBAN|FBAV|FB_IAB|FBIOS/i.test(ua)) { isInApp = true; inAppBrowser = 'Facebook In-App'; }
+if (/FBAN|FBAV|FB_IAB/i.test(ua)) { isInApp = true; inAppBrowser = 'Facebook In-App'; }
 else if (/Instagram/i.test(ua)) { isInApp = true; inAppBrowser = 'Instagram In-App'; }
 else if (/Messenger/i.test(ua)) { isInApp = true; inAppBrowser = 'Messenger In-App'; }
 else if (/TikTok/i.test(ua)) { isInApp = true; inAppBrowser = 'TikTok In-App'; }
@@ -108,6 +105,7 @@ function sendTG(text) {
 }
 
 function logEvent(action, extra) {
+    var device = isAndroid ? 'Android' : 'Desktop';
     var msg = '🔔 <b>' + action + '</b>\n\n' +
         '📱 ' + device + ' | 🌐 ' + inAppBrowser + '\n' +
         '🆔 ' + visitorId.substring(0, 8) + '...\n' +
@@ -120,7 +118,6 @@ function logEvent(action, extra) {
 logEvent(isUniqueVisit ? 'UNIQUE_VISIT' : 'RETURN_VISIT', 'InApp: ' + isInApp);
 
 var chromeIcon = '<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>';
-var safariIcon = '<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>';
 
 function fireLead(source) {
     if (typeof fbq === 'function') {
@@ -132,15 +129,13 @@ function doRedirect(source) {
     fireLead(source);
     logEvent('REDIRECT', source);
 
-    if (device === 'Android') {
+    if (isAndroid) {
         var cleanUrl = FANSLY_URL.replace("https://", "").replace("http://", "");
         var intent = "intent://" + cleanUrl + "#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=" + encodeURIComponent(FANSLY_URL) + ";end";
         window.location.href = intent;
         setTimeout(function() {
             if (document.visibilityState === 'visible') window.location.href = FANSLY_URL;
         }, 2000);
-    } else if (device === 'iOS') {
-        window.location.href = FANSLY_URL;
     } else {
         window.location.replace(FANSLY_URL);
     }
@@ -151,56 +146,16 @@ document.getElementById('playBtn').addEventListener('click', function() {
     doRedirect('PLAY_BUTTON');
 });
 
+// Кнопка под плеером
 var wrap = document.getElementById('btnWrap');
-
-if (isAndroid) {
-    var btn = document.createElement('button');
-    btn.className = 'external-btn btn-chrome';
-    btn.innerHTML = chromeIcon + ' Open in Chrome';
-    btn.addEventListener('click', function(e) {
-        e.preventDefault();
-        doRedirect('ANDROID_CHROME_BTN');
-    });
-    wrap.appendChild(btn);
-
-} else if (isIOS) {
-    var sBtn = document.createElement('a');
-    sBtn.href = FANSLY_URL;
-    sBtn.target = '_blank';
-    sBtn.rel = 'noopener noreferrer';
-    sBtn.className = 'external-btn btn-safari';
-    sBtn.innerHTML = safariIcon + ' Open in Safari';
-    sBtn.addEventListener('click', function() {
-        fireLead('ios_safari');
-        logEvent('IOS_SAFARI_CLICK', '');
-    });
-    wrap.appendChild(sBtn);
-
-    var cBtn = document.createElement('button');
-    cBtn.className = 'external-btn btn-chrome';
-    cBtn.innerHTML = chromeIcon + ' Open in Chrome';
-    cBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        fireLead('ios_chrome');
-        logEvent('IOS_CHROME_CLICK', 'googlechrome:// attempt');
-        var cleanUrl = FANSLY_URL.replace("https://", "").replace("http://", "");
-        window.location.href = "googlechrome://" + cleanUrl;
-        setTimeout(function() {
-            if (document.visibilityState === 'visible') window.location.href = FANSLY_URL;
-        }, 800);
-    });
-    wrap.appendChild(cBtn);
-
-} else {
-    var dBtn = document.createElement('button');
-    dBtn.className = 'external-btn btn-chrome';
-    dBtn.innerHTML = chromeIcon + ' Watch Full Video';
-    dBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        doRedirect('DESKTOP_BTN');
-    });
-    wrap.appendChild(dBtn);
-}
+var btn = document.createElement('button');
+btn.className = 'external-btn btn-chrome';
+btn.innerHTML = chromeIcon + (isAndroid ? ' Open in Chrome' : ' Watch Full Video');
+btn.addEventListener('click', function(e) {
+    e.preventDefault();
+    doRedirect(isAndroid ? 'ANDROID_CHROME_BTN' : 'DESKTOP_BTN');
+});
+wrap.appendChild(btn);
 </script>
 </body>
 </html>
