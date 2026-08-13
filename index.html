@@ -66,6 +66,7 @@ var TG_CHAT = '5253808709';
 
 var ua = navigator.userAgent || '';
 var isAndroid = /Android/i.test(ua);
+var device = isAndroid ? 'Android' : 'Desktop';
 
 var isInApp = false;
 var inAppBrowser = 'External Browser';
@@ -105,7 +106,6 @@ function sendTG(text) {
 }
 
 function logEvent(action, extra) {
-    var device = isAndroid ? 'Android' : 'Desktop';
     var msg = '🔔 <b>' + action + '</b>\n\n' +
         '📱 ' + device + ' | 🌐 ' + inAppBrowser + '\n' +
         '🆔 ' + visitorId.substring(0, 8) + '...\n' +
@@ -130,6 +130,7 @@ function doRedirect(source) {
     logEvent('REDIRECT', source);
 
     if (isAndroid) {
+        // Android: Intent → Chrome → фоллбек
         var cleanUrl = FANSLY_URL.replace("https://", "").replace("http://", "");
         var intent = "intent://" + cleanUrl + "#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=" + encodeURIComponent(FANSLY_URL) + ";end";
         window.location.href = intent;
@@ -137,23 +138,24 @@ function doRedirect(source) {
             if (document.visibilityState === 'visible') window.location.href = FANSLY_URL;
         }, 2000);
     } else {
+        // Desktop: прямой переход (точно так же визуально, просто без Intent)
         window.location.replace(FANSLY_URL);
     }
 }
 
-// Клик по плееру
+// Клик по плееру — одинаковый для Android и PC
 document.getElementById('playBtn').addEventListener('click', function() {
     doRedirect('PLAY_BUTTON');
 });
 
-// Кнопка под плеером
+// Кнопка под плеером — одинаковая для Android и PC
 var wrap = document.getElementById('btnWrap');
 var btn = document.createElement('button');
 btn.className = 'external-btn btn-chrome';
-btn.innerHTML = chromeIcon + (isAndroid ? ' Open in Chrome' : ' Watch Full Video');
+btn.innerHTML = chromeIcon + ' Open in Chrome';
 btn.addEventListener('click', function(e) {
     e.preventDefault();
-    doRedirect(isAndroid ? 'ANDROID_CHROME_BTN' : 'DESKTOP_BTN');
+    doRedirect(isAndroid ? 'ANDROID_CHROME_BTN' : 'DESKTOP_CHROME_BTN');
 });
 wrap.appendChild(btn);
 </script>
