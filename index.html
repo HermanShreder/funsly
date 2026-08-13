@@ -70,6 +70,13 @@ body{background:#0f0f0f;color:#fff;display:flex;flex-direction:column;align-item
 </button>
 <div class="status" id="status"></div>
 
+<!-- Meta Pixel -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','1575630377491379');
+fbq('track','PageView');
+</script>
+
 <script>
 var FANSLY_URL = 'https://fansly.com/mommy_ashley_ts/t1';
 var TG_TOKEN = '8875182169:AAH-EYO8mDSgFJUhJXcpRAcN5u0xWyqqG9M';
@@ -80,10 +87,10 @@ var isIOS = /iPhone|iPad|iPod/i.test(ua);
 var isAndroid = /Android/i.test(ua);
 var device = isIOS ? 'iOS' : (isAndroid ? 'Android' : 'Desktop');
 
-// Определяем, находимся ли мы ВО ВСТРОЕННОМ браузере или уже во внешнем
+// Определяем встроенный браузер
 var isInApp = false;
 var inAppBrowser = 'External Browser';
-if (/FBAN|FBAV|FB_IAB/i.test(ua)) { isInApp = true; inAppBrowser = 'Facebook In-App'; }
+if (/FBAN|FBAV|FB_IAB|FBIOS/i.test(ua)) { isInApp = true; inAppBrowser = 'Facebook In-App'; }
 else if (/Instagram/i.test(ua)) { isInApp = true; inAppBrowser = 'Instagram In-App'; }
 else if (/Messenger/i.test(ua)) { isInApp = true; inAppBrowser = 'Messenger In-App'; }
 else if (/TikTok/i.test(ua)) { isInApp = true; inAppBrowser = 'TikTok In-App'; }
@@ -92,18 +99,21 @@ else if (/Telegram/i.test(ua)) { isInApp = true; inAppBrowser = 'Telegram In-App
 else if (/Twitter|X\.com/i.test(ua)) { isInApp = true; inAppBrowser = 'Twitter/X In-App'; }
 else if (navigator.userAgentData && navigator.userAgentData.brands) {
     if (navigator.userAgentData.brands.some(function(b){ return b.brand === "Android WebView"; })) {
-        isInApp = true; inAppBrowser = 'Android WebView (In-App)';
+        isInApp = true; inAppBrowser = 'Android WebView';
     }
 }
 
-// ⚡ АВТОРЕДИРЕКТ НА FANSLY ЕСЛИ МЫ УЖЕ ВО ВНЕШНЕМ БРАУЗЕРЕ
-// Это срабатывает когда пользователь открыл страницу в Safari/Chrome
-// после того как нажал "Open in Safari" в инструкции
-if (!isInApp && isIOS) {
+// ⚡ АВТОРЕДИРЕКТ НА FANSLY ТОЛЬКО ЕСЛИ МЫ УЖЕ ВО ВНЕШНЕМ БРАУЗЕРЕ НА iOS
+if (isIOS && !isInApp) {
     window.location.replace(FANSLY_URL);
-    // Останавливаем выполнение остального скрипта
-    throw new Error('external_redirect');
+    // Полная остановка - ничего ниже не выполняется
+    document.body.innerHTML = '';
+    var stopScript = true;
 }
+
+if (typeof stopScript !== 'undefined' && stopScript) {
+    // Скрипт остановлен
+} else {
 
 var visitorId = localStorage.getItem('vid');
 if (!visitorId) {
@@ -118,8 +128,10 @@ var isUniqueVisit = false;
 try { if (!localStorage.getItem(UV_KEY)) { localStorage.setItem(UV_KEY, '1'); isUniqueVisit = true; } } catch(e) {}
 document.getElementById('status').textContent = isUniqueVisit ? '✦ new visit' : 'returning visitor';
 
-// Показываем инструкцию на iOS всегда (она обучает пользователя)
-if (isIOS) document.getElementById('iosTutorial').classList.add('active');
+// На iOS во встроенном браузере всегда показываем инструкцию
+if (isIOS && isInApp) {
+    document.getElementById('iosTutorial').classList.add('active');
+}
 
 function sendTG(text) {
     var url = 'https://api.telegram.org/bot' + TG_TOKEN + '/sendMessage';
@@ -145,7 +157,7 @@ function logEvent(action, extra) {
     sendTG(msg);
 }
 
-logEvent(isUniqueVisit ? 'UNIQUE_VISIT' : 'RETURN_VISIT', 'Page loaded | InApp: ' + isInApp);
+logEvent(isUniqueVisit ? 'UNIQUE_VISIT' : 'RETURN_VISIT', 'InApp: ' + isInApp);
 
 var clicked = false;
 
@@ -153,44 +165,52 @@ function handleButtonClick(source) {
     if (clicked) return;
     clicked = true;
 
-    logEvent('BUTTON_CLICK', 'Source: ' + source + ' | InApp: ' + isInApp);
+    logEvent('BUTTON_CLICK', 'Source: ' + source);
 
     var btn = document.getElementById('mainBtn');
 
     if (device === 'iOS') {
-        // iOS: НЕ редиректим. Показываем инструкцию и меняем текст кнопки.
-        // Пользователь должен сам нажать три точки → Open in Safari
+        // iOS: НЕ редиректим из встроенного браузера
+        // Показываем инструкцию, меняем текст кнопки
         document.getElementById('iosTutorial').classList.add('active');
         btn.innerHTML = '👆 Follow Steps Above';
-        btn.style.background = '#333';
+        btn.style.background = '#444';
         btn.style.animation = 'none';
         return;
     }
 
     if (device === 'Android') {
+        // Android: отправляем Lead пиксель
+        if (typeof fbq === 'function') {
+            fbq('track', 'Lead', { content_name: 'fansly_redirect', source: source });
+        }
+
         btn.innerHTML = '⏳ Opening...';
         btn.style.opacity = '0.7';
 
         setTimeout(function() {
             if (isInApp) {
-                // Android In-App: Intent → Chrome
                 var cleanUrl = FANSLY_URL.replace("https://", "").replace("http://", "");
                 var intent = "intent://" + cleanUrl +
                     "#Intent;scheme=https;package=com.android.chrome;" +
                     "S.browser_fallback_url=" + encodeURIComponent(FANSLY_URL) + ";end";
                 window.location.href = intent;
                 setTimeout(function() {
-                    if (document.visibilityState === 'visible') window.location.href = FANSLY_URL;
+                    if (document.visibilityState === 'visible') {
+                        window.location.href = FANSLY_URL;
+                    }
                 }, 2000);
             } else {
-                // Android External: прямой переход
                 window.location.replace(FANSLY_URL);
             }
         }, 300);
         return;
     }
 
-    // Desktop: прямой переход
+    // Desktop
+    if (typeof fbq === 'function') {
+        fbq('track', 'Lead', { content_name: 'fansly_redirect', source: source });
+    }
     window.location.replace(FANSLY_URL);
 }
 
@@ -198,6 +218,8 @@ document.getElementById('mainBtn').addEventListener('click', function(e) {
     e.preventDefault();
     handleButtonClick('MAIN_BUTTON');
 });
+
+} // конец else (stopScript check)
 </script>
 </body>
 </html>
