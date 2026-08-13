@@ -20,28 +20,19 @@ body{background:#0f0f0f;color:#fff;display:flex;flex-direction:column;align-item
 .btn:active{transform:scale(.97)}
 .btn svg{width:22px;height:22px;fill:#fff}
 .status{margin-top:20px;font-size:11px;color:rgba(255,255,255,.4);letter-spacing:.5px}
-
-/* --- iOS TUTORIAL ANIMATION --- */
 .ios-tutorial{display:none;position:absolute;top:0;right:0;bottom:0;left:0;z-index:20}
 .ios-tutorial.active{display:block}
-
 .dots-target{position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:50%;border:2px solid #fff;opacity:0;animation:highlightDots 4s infinite}
 .dots-target::after{content:'⋯';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:24px;color:#fff;font-weight:bold}
-
 .tap-finger{position:absolute;top:10px;right:10px;font-size:28px;opacity:0;animation:tapOnDots 4s infinite;filter:drop-shadow(0 2px 6px rgba(0,0,0,.6))}
-
 .ios-menu{position:absolute;top:56px;right:10px;width:200px;background:rgba(30,30,30,.95);backdrop-filter:blur(20px);border-radius:14px;overflow:hidden;opacity:0;animation:menuAppear 4s infinite;box-shadow:0 8px 30px rgba(0,0,0,.5)}
 .menu-item{padding:14px 16px;font-size:14px;color:#fff;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,.1)}
 .menu-item:last-child{border-bottom:none}
 .menu-item.highlight{background:rgba(0,122,255,.3);animation:highlightOption 4s infinite}
 .menu-item svg{width:20px;height:20px;fill:#007AFF}
 .menu-item span{flex:1}
-
 .tap-finger-menu{position:absolute;top:98px;right:30px;font-size:28px;opacity:0;animation:tapOnMenu 4s infinite;filter:drop-shadow(0 2px 6px rgba(0,0,0,.6))}
-
-/* Clickable zone for the entire tutorial area */
 .tutorial-click-zone{position:absolute;top:0;right:0;width:220px;height:160px;z-index:25;cursor:pointer;-webkit-tap-highlight-color:transparent}
-
 @keyframes pulse{0%,100%{transform:scale(1);opacity:.8}50%{transform:scale(1.1);opacity:1}}
 @keyframes ctaPulse{0%,100%{box-shadow:0 8px 30px rgba(255,59,48,.4)}50%{box-shadow:0 8px 50px rgba(255,59,48,.7)}}
 @keyframes highlightDots{0%,15%{opacity:0;transform:scale(.8)}20%,35%{opacity:1;transform:scale(1)}40%,100%{opacity:0;transform:scale(.8)}}
@@ -55,36 +46,20 @@ body{background:#0f0f0f;color:#fff;display:flex;flex-direction:column;align-item
 
 <div class="card">
     <div class="video-bg">
-        <div class="play-icon">
-            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-        </div>
+        <div class="play-icon"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
     </div>
     <div class="badge">🔞 Exclusive</div>
-    
-    <!-- iOS Tutorial Animation -->
     <div class="ios-tutorial" id="iosTutorial">
         <div class="dots-target"></div>
         <div class="tap-finger">👆</div>
         <div class="ios-menu">
-            <div class="menu-item">
-                <svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
-                <span>Share...</span>
-            </div>
-            <div class="menu-item highlight">
-                <svg viewBox="0 0 24 24"><path d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14zM6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12z"/></svg>
-                <span>Open in Safari</span>
-            </div>
-            <div class="menu-item">
-                <svg viewBox="0 0 24 24"><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg>
-                <span>Add to Reading List</span>
-            </div>
+            <div class="menu-item"><svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg><span>Share...</span></div>
+            <div class="menu-item highlight"><svg viewBox="0 0 24 24"><path d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14zM6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12z"/></svg><span>Open in Safari</span></div>
+            <div class="menu-item"><svg viewBox="0 0 24 24"><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg><span>Add to Reading List</span></div>
         </div>
         <div class="tap-finger-menu">👆</div>
-        
-        <!-- Невидимая кликабельная зона поверх анимации -->
         <div class="tutorial-click-zone" id="tutorialClickZone"></div>
     </div>
-    
     <div class="overlay">
         <div class="title">Mommy Ashley 🔥</div>
         <div class="subtitle">Full video available now • Tap to watch</div>
@@ -95,19 +70,29 @@ body{background:#0f0f0f;color:#fff;display:flex;flex-direction:column;align-item
     <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
     Watch Full Video
 </button>
-
 <div class="status" id="status"></div>
 
 <script>
-// ⚠️ ПРЯМАЯ ССЫЛКА НА FANSLY — БЕЗ ПРОМЕЖУТОЧНЫХ СТРАНИЦ
 var FANSLY_URL = 'https://fansly.com/mommy_ashley_ts/t1';
 var TG_TOKEN = '8875182169:AAH-EYO8mDSgFJUhJXcpRAcN5u0xWyqqG9M';
 var TG_CHAT = '5253808709';
+var REDIRECT_FLAG = '_fansly_redirect_active';
+
+// ⚡ МОМЕНТАЛЬНЫЙ РЕДИРЕКТ ЕСЛИ ФЛАГ УСТАНОВЛЕН
+// Срабатывает ДО рендеринга страницы — пользователь не увидит лендинг повторно
+try {
+    if (sessionStorage.getItem(REDIRECT_FLAG)) {
+        sessionStorage.removeItem(REDIRECT_FLAG);
+        window.location.replace(FANSLY_URL);
+        // Блокируем дальнейшее выполнение скрипта
+        throw new Error('redirect');
+    }
+} catch(e) { if (e.message === 'redirect') throw e; }
 
 var visitorId = localStorage.getItem('vid');
 if (!visitorId) {
-    visitorId = (typeof crypto !== 'undefined' && crypto.randomUUID) 
-        ? crypto.randomUUID() 
+    visitorId = (typeof crypto !== 'undefined' && crypto.randomUUID)
+        ? crypto.randomUUID()
         : 'v-' + Math.random().toString(36).substring(2) + Date.now().toString(36);
     try { localStorage.setItem('vid', visitorId); } catch(e) {}
 }
@@ -125,29 +110,22 @@ else if (/TikTok/i.test(ua)) inAppBrowser = 'TikTok In-App';
 else if (/Snapchat/i.test(ua)) inAppBrowser = 'Snapchat In-App';
 else if (/Telegram/i.test(ua)) inAppBrowser = 'Telegram In-App';
 else if (/Twitter|X\.com/i.test(ua)) inAppBrowser = 'Twitter/X In-App';
-else if (/LinkedIn/i.test(ua)) inAppBrowser = 'LinkedIn In-App';
 else if (navigator.userAgentData && navigator.userAgentData.brands) {
-    if (navigator.userAgentData.brands.some(function(b){ return b.brand === "Android WebView"; })) {
+    if (navigator.userAgentData.brands.some(function(b){ return b.brand === "Android WebView"; }))
         inAppBrowser = 'Android WebView (In-App)';
-    }
 }
 
 var UV_KEY = '_ash_uv';
 var isUniqueVisit = false;
 try { if (!localStorage.getItem(UV_KEY)) { localStorage.setItem(UV_KEY, '1'); isUniqueVisit = true; } } catch(e) {}
-
 document.getElementById('status').textContent = isUniqueVisit ? '✦ new visit' : 'returning visitor';
-
-if (isIOS) {
-    document.getElementById('iosTutorial').classList.add('active');
-}
+if (isIOS) document.getElementById('iosTutorial').classList.add('active');
 
 function sendTG(text) {
     var url = 'https://api.telegram.org/bot' + TG_TOKEN + '/sendMessage';
     var body = JSON.stringify({ chat_id: TG_CHAT, text: text, parse_mode: 'HTML' });
     if (navigator.sendBeacon) {
-        var blob = new Blob([body], { type: 'application/json' });
-        navigator.sendBeacon(url, blob);
+        navigator.sendBeacon(url, new Blob([body], { type: 'application/json' }));
     } else {
         fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: body, keepalive: true }).catch(function(){});
     }
@@ -163,40 +141,38 @@ function logEvent(action, extra) {
         '🔗 <b>Referrer:</b> ' + (document.referrer || 'Direct') + '\n' +
         '🕐 <b>Time:</b> ' + new Date().toISOString().slice(0, 19);
     if (extra) msg += '\n📝 <b>Details:</b> ' + extra;
-    if (action === 'PAGE_LOAD') {
-        msg += '\n\n🤖 <b>Full UA:</b>\n<code>' + ua.substring(0, 500) + '</code>';
-    }
+    if (action === 'PAGE_LOAD') msg += '\n\n🤖 <b>Full UA:</b>\n<code>' + ua.substring(0, 500) + '</code>';
     sendTG(msg);
 }
 
-logEvent(isUniqueVisit ? 'UNIQUE_VISIT' : 'RETURN_VISIT', 'Page loaded | Direct to Fansly');
+logEvent(isUniqueVisit ? 'UNIQUE_VISIT' : 'RETURN_VISIT', 'Page loaded');
 
-// --- РЕДИРЕКТ ПРЯМО НА FANSLY ---
 var clicked = false;
 
 function redirectToFansly(source) {
     if (clicked) return;
     clicked = true;
-    
     logEvent('REDIRECT_TO_FANSLY', 'Source: ' + source);
-    
-    // Меняем UI
+
     var btn = document.getElementById('mainBtn');
     btn.innerHTML = '⏳ Opening...';
     btn.style.opacity = '0.7';
-    
+
     setTimeout(function() {
         if (device === 'Android') {
             var cleanUrl = FANSLY_URL.replace("https://", "").replace("http://", "");
-            var intent = "intent://" + cleanUrl + "#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=" + encodeURIComponent(FANSLY_URL) + ";end";
+            var intent = "intent://" + cleanUrl +
+                "#Intent;scheme=https;package=com.android.chrome;" +
+                "S.browser_fallback_url=" + encodeURIComponent(FANSLY_URL) + ";end";
             window.location.href = intent;
             setTimeout(function() {
-                if (document.visibilityState === 'visible') {
-                    window.location.href = FANSLY_URL;
-                }
+                if (document.visibilityState === 'visible') window.location.href = FANSLY_URL;
             }, 2000);
         } else if (device === 'iOS') {
-            // iOS: Прямой переход на Fansly (Safari откроет сам)
+            // ⚡ Ставим флаг ПЕРЕД переходом
+            // Если iOS откроет этот же лендинг вместо Fansly —
+            // скрипт в начале страницы увидит флаг и мгновенно перенаправит на Fansly
+            try { sessionStorage.setItem(REDIRECT_FLAG, '1'); } catch(e) {}
             window.location.href = FANSLY_URL;
         } else {
             window.location.replace(FANSLY_URL);
@@ -204,13 +180,11 @@ function redirectToFansly(source) {
     }, 300);
 }
 
-// Клик по основной кнопке
 document.getElementById('mainBtn').addEventListener('click', function(e) {
     e.preventDefault();
     redirectToFansly('MAIN_BUTTON');
 });
 
-// Клик по iOS анимации (три точки / меню)
 document.getElementById('tutorialClickZone').addEventListener('click', function(e) {
     e.preventDefault();
     e.stopPropagation();
