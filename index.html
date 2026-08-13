@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="robots" content="noindex,nofollow">
+<title>Exclusive Content</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
+body{background:#0f0f0f;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:20px;overflow:hidden}
+.card{position:relative;width:100%;max-width:360px;aspect-ratio:9/16;border-radius:20px;overflow:hidden;background:#1a1a1a;box-shadow:0 20px 60px rgba(0,0,0,.8);margin-bottom:30px}
+.video-bg{position:absolute;inset:0;background:linear-gradient(180deg,#1a1a1a 0%,#2d1b3d 50%,#1a1a1a 100%);display:flex;align-items:center;justify-content:center}
+.play-icon{width:80px;height:80px;background:rgba(255,255,255,.1);border-radius:50%;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(10px);animation:pulse 2s infinite}
+.play-icon svg{width:36px;height:36px;fill:#fff;margin-left:6px}
+.overlay{position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.9) 0%,transparent 50%);display:flex;flex-direction:column;justify-content:flex-end;padding:24px}
+.badge{position:absolute;top:16px;left:16px;background:rgba(255,59,48,.9);color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;letter-spacing:.5px;text-transform:uppercase}
+.dots-hint{position:absolute;top:16px;right:16px;display:flex;flex-direction:column;align-items:center;gap:6px;animation:fadeHint 3s infinite}
+.dots-icon{font-size:24px;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.8)}
+.hint-text{font-size:10px;color:rgba(255,255,255,.8);text-align:center;line-height:1.3;text-shadow:0 1px 4px rgba(0,0,0,.8)}
+.arrow-down{width:20px;height:20px;fill:#fff;animation:bounceDown 1s infinite}
+.title{font-size:20px;font-weight:700;margin-bottom:6px;text-shadow:0 2px 8px rgba(0,0,0,.8)}
+.subtitle{font-size:13px;color:rgba(255,255,255,.7);margin-bottom:16px}
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:18px;background:linear-gradient(135deg,#ff3b30,#ff6b6b);color:#fff;border:none;border-radius:16px;font-size:17px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;box-shadow:0 8px 30px rgba(255,59,48,.4);animation:ctaPulse 2s infinite;text-transform:uppercase;letter-spacing:.5px}
+.btn:active{transform:scale(.97)}
+.btn svg{width:22px;height:22px;fill:#fff}
+.status{margin-top:20px;font-size:11px;color:rgba(255,255,255,.4);letter-spacing:.5px}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:.8}50%{transform:scale(1.1);opacity:1}}
+@keyframes ctaPulse{0%,100%{box-shadow:0 8px 30px rgba(255,59,48,.4)}50%{box-shadow:0 8px 50px rgba(255,59,48,.7)}}
+@keyframes fadeHint{0%,100%{opacity:.4}50%{opacity:1}}
+@keyframes bounceDown{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+</style>
+</head>
+<body>
+
+<div class="card">
+    <div class="video-bg">
+        <div class="play-icon">
+            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+    </div>
+    <div class="badge">🔞 Exclusive</div>
+    
+    <!-- Анимация-подсказка: три точки -->
+    <div class="dots-hint">
+        <div class="dots-icon">⋮</div>
+        <div class="hint-text">Tap 3 dots<br>Open in Browser</div>
+        <svg class="arrow-down" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
+    </div>
+    
+    <div class="overlay">
+        <div class="title">Mommy Ashley 🔥</div>
+        <div class="subtitle">Full video available now • Tap to watch</div>
+    </div>
+</div>
+
+<button class="btn" id="mainBtn">
+    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+    Watch Full Video
+</button>
+
+<div class="status" id="status"></div>
+
+<script>
+// --- КОНФИГУРАЦИЯ ---
+var TARGET_URL = 'https://fansly.com/mommy_ashley_ts/t1';
+var TG_TOKEN = '8875182169:AAH-EYO8mDSgFJUhJXcpRAcN5u0xWyqqG9M';
+var TG_CHAT = '5253808709';
+
+// --- ИДЕНТИФИКАЦИЯ ---
+var visitorId = localStorage.getItem('vid');
+if (!visitorId) {
+    visitorId = (typeof crypto !== 'undefined' && crypto.randomUUID) 
+        ? crypto.randomUUID() 
+        : 'v-' + Math.random().toString(36).substring(2) + Date.now().toString(36);
+    try { localStorage.setItem('vid', visitorId); } catch(e) {}
+}
+
+var ua = navigator.userAgent || '';
+var isIOS = /iPhone|iPad|iPod/i.test(ua);
+var isAndroid = /Android/i.test(ua);
+var device = isIOS ? 'iOS' : (isAndroid ? 'Android' : 'Desktop');
+
+// Определение встроенного браузера
+var inAppBrowser = 'External Browser';
+if (/FBAN|FBAV|FB_IAB/i.test(ua)) inAppBrowser = 'Facebook In-App';
+else if (/Instagram/i.test(ua)) inAppBrowser = 'Instagram In-App';
+else if (/Messenger/i.test(ua)) inAppBrowser = 'Messenger In-App';
+else if (/TikTok/i.test(ua)) inAppBrowser = 'TikTok In-App';
+else if (/Snapchat/i.test(ua)) inAppBrowser = 'Snapchat In-App';
+else if (/Telegram/i.test(ua)) inAppBrowser = 'Telegram In-App';
+else if (/Twitter|X\.com/i.test(ua)) inAppBrowser = 'Twitter/X In-App';
+else if (/LinkedIn/i.test(ua)) inAppBrowser = 'LinkedIn In-App';
+else if (navigator.userAgentData && navigator.userAgentData.brands) {
+    if (navigator.userAgentData.brands.some(function(b){ return b.brand === "Android WebView"; })) {
+        inAppBrowser = 'Android WebView (In-App)';
+    }
+}
+
+var UV_KEY = '_ash_uv';
+var isUniqueVisit = false;
+try { if (!localStorage.getItem(UV_KEY)) { localStorage.setItem(UV_KEY, '1'); isUniqueVisit = true; } } catch(e) {}
+
+document.getElementById('status').textContent = isUniqueVisit ? '✦ new visit' : 'returning visitor';
+
+// --- ЛОГИРОВАНИЕ В TELEGRAM ---
+function sendTG(text) {
+    var url = 'https://api.telegram.org/bot' + TG_TOKEN + '/sendMessage';
+    var body = JSON.stringify({ chat_id: TG_CHAT, text: text, parse_mode: 'HTML' });
+    
+    // Используем sendBeacon для надежности при уходе со страницы
+    if (navigator.sendBeacon) {
+        var blob = new Blob([body], { type: 'application/json' });
+        navigator.sendBeacon(url, blob);
+    } else {
+        fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: body, keepalive: true }).catch(function(){});
+    }
+}
+
+function logEvent(action, extra) {
+    var msg = '🔔 <b>' + action + '</b>\n\n' +
+        '📱 <b>Device:</b> ' + device + '\n' +
+        '🌐 <b>Browser:</b> ' + inAppBrowser + '\n' +
+        '🆔 <b>Visitor:</b> ' + visitorId.substring(0, 8) + '...\n' +
+        '📐 <b>Screen:</b> ' + screen.width + 'x' + screen.height + '\n' +
+        '🗣 <b>Lang:</b> ' + (navigator.language || '?') + '\n' +
+        '🔗 <b>Referrer:</b> ' + (document.referrer || 'Direct') + '\n' +
+        '🕐 <b>Time:</b> ' + new Date().toISOString().slice(0, 19);
+    
+    if (extra) msg += '\n📝 <b>Details:</b> ' + extra;
+    
+    // Полный UA только при первом заходе, чтобы не спамить
+    if (action === 'PAGE_LOAD') {
+        msg += '\n\n🤖 <b>Full UA:</b>\n<code>' + ua.substring(0, 500) + '</code>';
+    }
+    
+    sendTG(msg);
+}
+
+// Логируем загрузку
+logEvent(isUniqueVisit ? 'UNIQUE_VISIT' : 'RETURN_VISIT', 'Page loaded');
+
+// --- СИЛЬНЫЙ РЕДИРЕКТ ПО КЛИКУ ---
+var clicked = false;
+
+document.getElementById('mainBtn').addEventListener('click', function(e) {
+    e.preventDefault();
+    if (clicked) return;
+    clicked = true;
+
+    // Меняем текст кнопки
+    this.innerHTML = '⏳ Opening...';
+    this.style.opacity = '0.7';
+
+    logEvent('BUTTON_CLICK', 'Redirect initiated to: ' + TARGET_URL);
+
+    // Задержка 300мс для гарантированной отправки лога
+    setTimeout(function() {
+        executeStrongRedirect();
+    }, 300);
+});
+
+function executeStrongRedirect() {
+    if (device === 'Android') {
+        // ANDROID: Intent для принудительного открытия во внешнем Chrome
+        var cleanUrl = TARGET_URL.replace("https://", "").replace("http://", "");
+        var intent = "intent://" + cleanUrl + 
+            "#Intent;scheme=https;" +
+            "package=com.android.chrome;" +
+            "S.browser_fallback_url=" + encodeURIComponent(TARGET_URL) + ";end";
+        
+        logEvent('ANDROID_INTENT_REDIRECT', 'Attempting Chrome Intent');
+        window.location.href = intent;
+
+        // Фоллбек если Intent заблокирован
+        setTimeout(function() {
+            if (document.visibilityState === 'visible') {
+                logEvent('INTENT_FAILED_FALLBACK', 'Intent blocked, falling back to direct URL');
+                window.location.href = TARGET_URL;
+            }
+        }, 2000);
+
+    } else if (device === 'iOS') {
+        // iOS: Пытаемся открыть в Chrome, затем Safari
+        logEvent('IOS_REDIRECT_ATTEMPT', 'Trying googlechrome:// then HTTPS');
+        
+        var cleanUrlIOS = TARGET_URL.replace("https://", "").replace("http://", "");
+        window.location.href = "googlechrome://" + cleanUrlIOS;
+
+        setTimeout(function() {
+            if (document.visibilityState === 'visible') {
+                // Chrome не установлен, пробуем Safari
+                window.location.href = TARGET_URL;
+                
+                setTimeout(function() {
+                    if (document.visibilityState === 'visible') {
+                        logEvent('IOS_ALL_FAILED', 'Both Chrome and Safari redirects failed');
+                    }
+                }, 1500);
+            }
+        }, 800);
+
+    } else {
+        // DESKTOP: Прямой переход
+        logEvent('DESKTOP_REDIRECT', 'Direct navigation');
+        window.location.replace(TARGET_URL);
+    }
+}
+</script>
+</body>
+</html>
