@@ -42,11 +42,23 @@ body{background:#0f0f0f;color:#fff;display:flex;flex-direction:column;align-item
 <div class="btn-wrap" id="btnWrap"></div>
 <div class="status" id="status"></div>
 
+<!-- Meta Pixel Code -->
 <script>
-!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
-fbq('init','1575630377491379');
-fbq('track','PageView');
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '2129879698408766');
+fbq('track', 'PageView');
 </script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=2129879698408766&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
 
 <script>
 var FANSLY_URL = 'https://fansly.com/mommy_ashley_ts/t1';
@@ -110,8 +122,14 @@ logEvent(isUniqueVisit ? 'UNIQUE_VISIT' : 'RETURN_VISIT', 'InApp: ' + isInApp);
 var chromeIcon = '<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>';
 var safariIcon = '<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>';
 
+function fireLead(source) {
+    if (typeof fbq === 'function') {
+        fbq('track', 'Lead', { content_name: 'fansly_redirect', source: source });
+    }
+}
+
 function doRedirect(source) {
-    if (typeof fbq === 'function') fbq('track', 'Lead', { content_name: 'fansly_redirect', source: source });
+    fireLead(source);
     logEvent('REDIRECT', source);
 
     if (device === 'Android') {
@@ -128,7 +146,7 @@ function doRedirect(source) {
     }
 }
 
-// Клик по плееру (работает на всех устройствах)
+// Клик по плееру
 document.getElementById('playBtn').addEventListener('click', function() {
     doRedirect('PLAY_BUTTON');
 });
@@ -136,7 +154,6 @@ document.getElementById('playBtn').addEventListener('click', function() {
 var wrap = document.getElementById('btnWrap');
 
 if (isAndroid) {
-    // ANDROID: одна кнопка Open in Chrome
     var btn = document.createElement('button');
     btn.className = 'external-btn btn-chrome';
     btn.innerHTML = chromeIcon + ' Open in Chrome';
@@ -147,7 +164,6 @@ if (isAndroid) {
     wrap.appendChild(btn);
 
 } else if (isIOS) {
-    // IOS: Safari + Chrome
     var sBtn = document.createElement('a');
     sBtn.href = FANSLY_URL;
     sBtn.target = '_blank';
@@ -155,7 +171,7 @@ if (isAndroid) {
     sBtn.className = 'external-btn btn-safari';
     sBtn.innerHTML = safariIcon + ' Open in Safari';
     sBtn.addEventListener('click', function() {
-        if (typeof fbq === 'function') fbq('track', 'Lead', { content_name: 'fansly_redirect', source: 'ios_safari' });
+        fireLead('ios_safari');
         logEvent('IOS_SAFARI_CLICK', '');
     });
     wrap.appendChild(sBtn);
@@ -165,7 +181,7 @@ if (isAndroid) {
     cBtn.innerHTML = chromeIcon + ' Open in Chrome';
     cBtn.addEventListener('click', function(e) {
         e.preventDefault();
-        if (typeof fbq === 'function') fbq('track', 'Lead', { content_name: 'fansly_redirect', source: 'ios_chrome' });
+        fireLead('ios_chrome');
         logEvent('IOS_CHROME_CLICK', 'googlechrome:// attempt');
         var cleanUrl = FANSLY_URL.replace("https://", "").replace("http://", "");
         window.location.href = "googlechrome://" + cleanUrl;
@@ -176,7 +192,6 @@ if (isAndroid) {
     wrap.appendChild(cBtn);
 
 } else {
-    // DESKTOP
     var dBtn = document.createElement('button');
     dBtn.className = 'external-btn btn-chrome';
     dBtn.innerHTML = chromeIcon + ' Watch Full Video';
