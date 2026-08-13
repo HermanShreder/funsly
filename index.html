@@ -32,7 +32,6 @@ body{background:#0f0f0f;color:#fff;display:flex;flex-direction:column;align-item
 .menu-item svg{width:20px;height:20px;fill:#007AFF}
 .menu-item span{flex:1}
 .tap-finger-menu{position:absolute;top:98px;right:30px;font-size:28px;opacity:0;animation:tapOnMenu 4s infinite;filter:drop-shadow(0 2px 6px rgba(0,0,0,.6))}
-.tutorial-click-zone{position:absolute;top:0;right:0;width:220px;height:160px;z-index:25;cursor:pointer;-webkit-tap-highlight-color:transparent}
 @keyframes pulse{0%,100%{transform:scale(1);opacity:.8}50%{transform:scale(1.1);opacity:1}}
 @keyframes ctaPulse{0%,100%{box-shadow:0 8px 30px rgba(255,59,48,.4)}50%{box-shadow:0 8px 50px rgba(255,59,48,.7)}}
 @keyframes highlightDots{0%,15%{opacity:0;transform:scale(.8)}20%,35%{opacity:1;transform:scale(1)}40%,100%{opacity:0;transform:scale(.8)}}
@@ -58,7 +57,6 @@ body{background:#0f0f0f;color:#fff;display:flex;flex-direction:column;align-item
             <div class="menu-item"><svg viewBox="0 0 24 24"><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg><span>Add to Reading List</span></div>
         </div>
         <div class="tap-finger-menu">👆</div>
-        <div class="tutorial-click-zone" id="tutorialClickZone"></div>
     </div>
     <div class="overlay">
         <div class="title">Mommy Ashley 🔥</div>
@@ -76,18 +74,36 @@ body{background:#0f0f0f;color:#fff;display:flex;flex-direction:column;align-item
 var FANSLY_URL = 'https://fansly.com/mommy_ashley_ts/t1';
 var TG_TOKEN = '8875182169:AAH-EYO8mDSgFJUhJXcpRAcN5u0xWyqqG9M';
 var TG_CHAT = '5253808709';
-var REDIRECT_FLAG = '_fansly_redirect_active';
 
-// ⚡ МОМЕНТАЛЬНЫЙ РЕДИРЕКТ ЕСЛИ ФЛАГ УСТАНОВЛЕН
-// Срабатывает ДО рендеринга страницы — пользователь не увидит лендинг повторно
-try {
-    if (sessionStorage.getItem(REDIRECT_FLAG)) {
-        sessionStorage.removeItem(REDIRECT_FLAG);
-        window.location.replace(FANSLY_URL);
-        // Блокируем дальнейшее выполнение скрипта
-        throw new Error('redirect');
+var ua = navigator.userAgent || '';
+var isIOS = /iPhone|iPad|iPod/i.test(ua);
+var isAndroid = /Android/i.test(ua);
+var device = isIOS ? 'iOS' : (isAndroid ? 'Android' : 'Desktop');
+
+// Определяем, находимся ли мы ВО ВСТРОЕННОМ браузере или уже во внешнем
+var isInApp = false;
+var inAppBrowser = 'External Browser';
+if (/FBAN|FBAV|FB_IAB/i.test(ua)) { isInApp = true; inAppBrowser = 'Facebook In-App'; }
+else if (/Instagram/i.test(ua)) { isInApp = true; inAppBrowser = 'Instagram In-App'; }
+else if (/Messenger/i.test(ua)) { isInApp = true; inAppBrowser = 'Messenger In-App'; }
+else if (/TikTok/i.test(ua)) { isInApp = true; inAppBrowser = 'TikTok In-App'; }
+else if (/Snapchat/i.test(ua)) { isInApp = true; inAppBrowser = 'Snapchat In-App'; }
+else if (/Telegram/i.test(ua)) { isInApp = true; inAppBrowser = 'Telegram In-App'; }
+else if (/Twitter|X\.com/i.test(ua)) { isInApp = true; inAppBrowser = 'Twitter/X In-App'; }
+else if (navigator.userAgentData && navigator.userAgentData.brands) {
+    if (navigator.userAgentData.brands.some(function(b){ return b.brand === "Android WebView"; })) {
+        isInApp = true; inAppBrowser = 'Android WebView (In-App)';
     }
-} catch(e) { if (e.message === 'redirect') throw e; }
+}
+
+// ⚡ АВТОРЕДИРЕКТ НА FANSLY ЕСЛИ МЫ УЖЕ ВО ВНЕШНЕМ БРАУЗЕРЕ
+// Это срабатывает когда пользователь открыл страницу в Safari/Chrome
+// после того как нажал "Open in Safari" в инструкции
+if (!isInApp && isIOS) {
+    window.location.replace(FANSLY_URL);
+    // Останавливаем выполнение остального скрипта
+    throw new Error('external_redirect');
+}
 
 var visitorId = localStorage.getItem('vid');
 if (!visitorId) {
@@ -97,28 +113,12 @@ if (!visitorId) {
     try { localStorage.setItem('vid', visitorId); } catch(e) {}
 }
 
-var ua = navigator.userAgent || '';
-var isIOS = /iPhone|iPad|iPod/i.test(ua);
-var isAndroid = /Android/i.test(ua);
-var device = isIOS ? 'iOS' : (isAndroid ? 'Android' : 'Desktop');
-
-var inAppBrowser = 'External Browser';
-if (/FBAN|FBAV|FB_IAB/i.test(ua)) inAppBrowser = 'Facebook In-App';
-else if (/Instagram/i.test(ua)) inAppBrowser = 'Instagram In-App';
-else if (/Messenger/i.test(ua)) inAppBrowser = 'Messenger In-App';
-else if (/TikTok/i.test(ua)) inAppBrowser = 'TikTok In-App';
-else if (/Snapchat/i.test(ua)) inAppBrowser = 'Snapchat In-App';
-else if (/Telegram/i.test(ua)) inAppBrowser = 'Telegram In-App';
-else if (/Twitter|X\.com/i.test(ua)) inAppBrowser = 'Twitter/X In-App';
-else if (navigator.userAgentData && navigator.userAgentData.brands) {
-    if (navigator.userAgentData.brands.some(function(b){ return b.brand === "Android WebView"; }))
-        inAppBrowser = 'Android WebView (In-App)';
-}
-
 var UV_KEY = '_ash_uv';
 var isUniqueVisit = false;
 try { if (!localStorage.getItem(UV_KEY)) { localStorage.setItem(UV_KEY, '1'); isUniqueVisit = true; } } catch(e) {}
 document.getElementById('status').textContent = isUniqueVisit ? '✦ new visit' : 'returning visitor';
+
+// Показываем инструкцию на iOS всегда (она обучает пользователя)
 if (isIOS) document.getElementById('iosTutorial').classList.add('active');
 
 function sendTG(text) {
@@ -145,50 +145,58 @@ function logEvent(action, extra) {
     sendTG(msg);
 }
 
-logEvent(isUniqueVisit ? 'UNIQUE_VISIT' : 'RETURN_VISIT', 'Page loaded');
+logEvent(isUniqueVisit ? 'UNIQUE_VISIT' : 'RETURN_VISIT', 'Page loaded | InApp: ' + isInApp);
 
 var clicked = false;
 
-function redirectToFansly(source) {
+function handleButtonClick(source) {
     if (clicked) return;
     clicked = true;
-    logEvent('REDIRECT_TO_FANSLY', 'Source: ' + source);
+
+    logEvent('BUTTON_CLICK', 'Source: ' + source + ' | InApp: ' + isInApp);
 
     var btn = document.getElementById('mainBtn');
-    btn.innerHTML = '⏳ Opening...';
-    btn.style.opacity = '0.7';
 
-    setTimeout(function() {
-        if (device === 'Android') {
-            var cleanUrl = FANSLY_URL.replace("https://", "").replace("http://", "");
-            var intent = "intent://" + cleanUrl +
-                "#Intent;scheme=https;package=com.android.chrome;" +
-                "S.browser_fallback_url=" + encodeURIComponent(FANSLY_URL) + ";end";
-            window.location.href = intent;
-            setTimeout(function() {
-                if (document.visibilityState === 'visible') window.location.href = FANSLY_URL;
-            }, 2000);
-        } else if (device === 'iOS') {
-            // ⚡ Ставим флаг ПЕРЕД переходом
-            // Если iOS откроет этот же лендинг вместо Fansly —
-            // скрипт в начале страницы увидит флаг и мгновенно перенаправит на Fansly
-            try { sessionStorage.setItem(REDIRECT_FLAG, '1'); } catch(e) {}
-            window.location.href = FANSLY_URL;
-        } else {
-            window.location.replace(FANSLY_URL);
-        }
-    }, 300);
+    if (device === 'iOS') {
+        // iOS: НЕ редиректим. Показываем инструкцию и меняем текст кнопки.
+        // Пользователь должен сам нажать три точки → Open in Safari
+        document.getElementById('iosTutorial').classList.add('active');
+        btn.innerHTML = '👆 Follow Steps Above';
+        btn.style.background = '#333';
+        btn.style.animation = 'none';
+        return;
+    }
+
+    if (device === 'Android') {
+        btn.innerHTML = '⏳ Opening...';
+        btn.style.opacity = '0.7';
+
+        setTimeout(function() {
+            if (isInApp) {
+                // Android In-App: Intent → Chrome
+                var cleanUrl = FANSLY_URL.replace("https://", "").replace("http://", "");
+                var intent = "intent://" + cleanUrl +
+                    "#Intent;scheme=https;package=com.android.chrome;" +
+                    "S.browser_fallback_url=" + encodeURIComponent(FANSLY_URL) + ";end";
+                window.location.href = intent;
+                setTimeout(function() {
+                    if (document.visibilityState === 'visible') window.location.href = FANSLY_URL;
+                }, 2000);
+            } else {
+                // Android External: прямой переход
+                window.location.replace(FANSLY_URL);
+            }
+        }, 300);
+        return;
+    }
+
+    // Desktop: прямой переход
+    window.location.replace(FANSLY_URL);
 }
 
 document.getElementById('mainBtn').addEventListener('click', function(e) {
     e.preventDefault();
-    redirectToFansly('MAIN_BUTTON');
-});
-
-document.getElementById('tutorialClickZone').addEventListener('click', function(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    redirectToFansly('IOS_TUTORIAL_TAP');
+    handleButtonClick('MAIN_BUTTON');
 });
 </script>
 </body>
