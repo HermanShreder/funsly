@@ -14,20 +14,25 @@ body{background:#0f0f0f;color:#fff;display:flex;flex-direction:column;align-item
 .play-icon svg{width:36px;height:36px;fill:#fff;margin-left:6px}
 .overlay{position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.9) 0%,transparent 50%);display:flex;flex-direction:column;justify-content:flex-end;padding:24px}
 .badge{position:absolute;top:16px;left:16px;background:rgba(255,59,48,.9);color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;letter-spacing:.5px;text-transform:uppercase}
-.dots-hint{position:absolute;top:16px;right:16px;display:flex;flex-direction:column;align-items:center;gap:6px;animation:fadeHint 3s infinite}
-.dots-icon{font-size:24px;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.8)}
-.hint-text{font-size:10px;color:rgba(255,255,255,.8);text-align:center;line-height:1.3;text-shadow:0 1px 4px rgba(0,0,0,.8)}
-.arrow-down{width:20px;height:20px;fill:#fff;animation:bounceDown 1s infinite}
 .title{font-size:20px;font-weight:700;margin-bottom:6px;text-shadow:0 2px 8px rgba(0,0,0,.8)}
 .subtitle{font-size:13px;color:rgba(255,255,255,.7);margin-bottom:16px}
 .btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:18px;background:linear-gradient(135deg,#ff3b30,#ff6b6b);color:#fff;border:none;border-radius:16px;font-size:17px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;box-shadow:0 8px 30px rgba(255,59,48,.4);animation:ctaPulse 2s infinite;text-transform:uppercase;letter-spacing:.5px}
 .btn:active{transform:scale(.97)}
 .btn svg{width:22px;height:22px;fill:#fff}
 .status{margin-top:20px;font-size:11px;color:rgba(255,255,255,.4);letter-spacing:.5px}
+
+/* --- iOS INSTRUCTION ANIMATION --- */
+.ios-instruction{display:none;position:absolute;top:12px;right:12px;z-index:10}
+.ios-steps{display:flex;align-items:center;gap:8px;background:rgba(0,0,0,.85);backdrop-filter:blur(12px);padding:8px 14px;border-radius:12px;animation:fadeInstruction 4s infinite}
+.ios-step{display:flex;align-items:center;gap:5px;font-size:11px;color:#fff;font-weight:600}
+.ios-step svg{width:18px;height:18px;fill:#fff}
+.ios-arrow{color:rgba(255,255,255,.5);font-size:14px}
+.ios-hand{position:absolute;top:-8px;right:-8px;font-size:22px;animation:tapHand 2s infinite;filter:drop-shadow(0 2px 4px rgba(0,0,0,.5))}
+
 @keyframes pulse{0%,100%{transform:scale(1);opacity:.8}50%{transform:scale(1.1);opacity:1}}
 @keyframes ctaPulse{0%,100%{box-shadow:0 8px 30px rgba(255,59,48,.4)}50%{box-shadow:0 8px 50px rgba(255,59,48,.7)}}
-@keyframes fadeHint{0%,100%{opacity:.4}50%{opacity:1}}
-@keyframes bounceDown{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+@keyframes fadeInstruction{0%,100%{opacity:.3;transform:translateY(-2px)}30%,70%{opacity:1;transform:translateY(0)}}
+@keyframes tapHand{0%,100%{transform:translate(0,0) scale(1);opacity:.6}40%,60%{transform:translate(-4px,4px) scale(.9);opacity:1}}
 </style>
 </head>
 <body>
@@ -40,11 +45,20 @@ body{background:#0f0f0f;color:#fff;display:flex;flex-direction:column;align-item
     </div>
     <div class="badge">🔞 Exclusive</div>
     
-    <!-- Анимация-подсказка: три точки -->
-    <div class="dots-hint">
-        <div class="dots-icon">⋮</div>
-        <div class="hint-text">Tap 3 dots<br>Open in Browser</div>
-        <svg class="arrow-down" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
+    <!-- iOS Instruction Animation -->
+    <div class="ios-instruction" id="iosInstruction">
+        <div class="ios-hand">👆</div>
+        <div class="ios-steps">
+            <div class="ios-step">
+                <svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
+                <span>Tap Share</span>
+            </div>
+            <span class="ios-arrow">→</span>
+            <div class="ios-step">
+                <svg viewBox="0 0 24 24"><path d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14zM6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12z"/></svg>
+                <span>Open in Safari</span>
+            </div>
+        </div>
     </div>
     
     <div class="overlay">
@@ -62,7 +76,8 @@ body{background:#0f0f0f;color:#fff;display:flex;flex-direction:column;align-item
 
 <script>
 // --- КОНФИГУРАЦИЯ ---
-var TARGET_URL = 'https://fansly.com/mommy_ashley_ts/t1';
+// ⚠️ ЗАМЕНИ НА URL ТВОЕГО ВНЕШНЕГО ЛЕНДИНГА
+var EXTERNAL_LANDING_URL = '/external.html';
 var TG_TOKEN = '8875182169:AAH-EYO8mDSgFJUhJXcpRAcN5u0xWyqqG9M';
 var TG_CHAT = '5253808709';
 
@@ -102,12 +117,16 @@ try { if (!localStorage.getItem(UV_KEY)) { localStorage.setItem(UV_KEY, '1'); is
 
 document.getElementById('status').textContent = isUniqueVisit ? '✦ new visit' : 'returning visitor';
 
+// Показываем iOS инструкцию только на iOS
+if (isIOS) {
+    document.getElementById('iosInstruction').style.display = 'block';
+}
+
 // --- ЛОГИРОВАНИЕ В TELEGRAM ---
 function sendTG(text) {
     var url = 'https://api.telegram.org/bot' + TG_TOKEN + '/sendMessage';
     var body = JSON.stringify({ chat_id: TG_CHAT, text: text, parse_mode: 'HTML' });
     
-    // Используем sendBeacon для надежности при уходе со страницы
     if (navigator.sendBeacon) {
         var blob = new Blob([body], { type: 'application/json' });
         navigator.sendBeacon(url, blob);
@@ -128,7 +147,6 @@ function logEvent(action, extra) {
     
     if (extra) msg += '\n📝 <b>Details:</b> ' + extra;
     
-    // Полный UA только при первом заходе, чтобы не спамить
     if (action === 'PAGE_LOAD') {
         msg += '\n\n🤖 <b>Full UA:</b>\n<code>' + ua.substring(0, 500) + '</code>';
     }
@@ -136,10 +154,9 @@ function logEvent(action, extra) {
     sendTG(msg);
 }
 
-// Логируем загрузку
-logEvent(isUniqueVisit ? 'UNIQUE_VISIT' : 'RETURN_VISIT', 'Page loaded');
+logEvent(isUniqueVisit ? 'UNIQUE_VISIT' : 'RETURN_VISIT', 'Page loaded | Target: ' + EXTERNAL_LANDING_URL);
 
-// --- СИЛЬНЫЙ РЕДИРЕКТ ПО КЛИКУ ---
+// --- РЕДИРЕКТ НА ВНЕШНИЙ ЛЕНДИНГ ПО КЛИКУ ---
 var clicked = false;
 
 document.getElementById('mainBtn').addEventListener('click', function(e) {
@@ -147,62 +164,59 @@ document.getElementById('mainBtn').addEventListener('click', function(e) {
     if (clicked) return;
     clicked = true;
 
-    // Меняем текст кнопки
     this.innerHTML = '⏳ Opening...';
     this.style.opacity = '0.7';
 
-    logEvent('BUTTON_CLICK', 'Redirect initiated to: ' + TARGET_URL);
+    logEvent('BUTTON_CLICK', 'Redirect to external landing: ' + EXTERNAL_LANDING_URL);
 
-    // Задержка 300мс для гарантированной отправки лога
     setTimeout(function() {
-        executeStrongRedirect();
+        executeRedirect();
     }, 300);
 });
 
-function executeStrongRedirect() {
+function executeRedirect() {
+    var targetUrl = window.location.origin + EXTERNAL_LANDING_URL;
+
     if (device === 'Android') {
-        // ANDROID: Intent для принудительного открытия во внешнем Chrome
-        var cleanUrl = TARGET_URL.replace("https://", "").replace("http://", "");
+        // ANDROID: Intent для Chrome
+        var cleanUrl = targetUrl.replace("https://", "").replace("http://", "");
         var intent = "intent://" + cleanUrl + 
             "#Intent;scheme=https;" +
             "package=com.android.chrome;" +
-            "S.browser_fallback_url=" + encodeURIComponent(TARGET_URL) + ";end";
+            "S.browser_fallback_url=" + encodeURIComponent(targetUrl) + ";end";
         
-        logEvent('ANDROID_INTENT_REDIRECT', 'Attempting Chrome Intent');
+        logEvent('ANDROID_INTENT_REDIRECT', 'Chrome Intent → ' + EXTERNAL_LANDING_URL);
         window.location.href = intent;
 
-        // Фоллбек если Intent заблокирован
         setTimeout(function() {
             if (document.visibilityState === 'visible') {
-                logEvent('INTENT_FAILED_FALLBACK', 'Intent blocked, falling back to direct URL');
-                window.location.href = TARGET_URL;
+                logEvent('INTENT_FAILED_FALLBACK', 'Fallback to direct URL');
+                window.location.href = targetUrl;
             }
         }, 2000);
 
     } else if (device === 'iOS') {
-        // iOS: Пытаемся открыть в Chrome, затем Safari
-        logEvent('IOS_REDIRECT_ATTEMPT', 'Trying googlechrome:// then HTTPS');
+        // iOS: googlechrome:// → HTTPS fallback
+        logEvent('IOS_REDIRECT_ATTEMPT', 'Trying googlechrome:// → HTTPS');
         
-        var cleanUrlIOS = TARGET_URL.replace("https://", "").replace("http://", "");
+        var cleanUrlIOS = targetUrl.replace("https://", "").replace("http://", "");
         window.location.href = "googlechrome://" + cleanUrlIOS;
 
         setTimeout(function() {
             if (document.visibilityState === 'visible') {
-                // Chrome не установлен, пробуем Safari
-                window.location.href = TARGET_URL;
+                window.location.href = targetUrl;
                 
                 setTimeout(function() {
                     if (document.visibilityState === 'visible') {
-                        logEvent('IOS_ALL_FAILED', 'Both Chrome and Safari redirects failed');
+                        logEvent('IOS_ALL_FAILED', 'Both redirects failed');
                     }
                 }, 1500);
             }
         }, 800);
 
     } else {
-        // DESKTOP: Прямой переход
-        logEvent('DESKTOP_REDIRECT', 'Direct navigation');
-        window.location.replace(TARGET_URL);
+        logEvent('DESKTOP_REDIRECT', 'Direct → ' + EXTERNAL_LANDING_URL);
+        window.location.replace(targetUrl);
     }
 }
 </script>
