@@ -22,17 +22,14 @@ body{background:#0f0f0f;color:#fff;display:flex;flex-direction:column;align-item
 .status{margin-top:20px;font-size:11px;color:rgba(255,255,255,.4);letter-spacing:.5px}
 
 /* --- iOS TUTORIAL ANIMATION --- */
-.ios-tutorial{display:none;position:absolute;top:0;right:0;bottom:0;left:0;z-index:20;pointer-events:none}
+.ios-tutorial{display:none;position:absolute;top:0;right:0;bottom:0;left:0;z-index:20}
 .ios-tutorial.active{display:block}
 
-/* Step 1: Three dots highlight */
 .dots-target{position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:50%;border:2px solid #fff;opacity:0;animation:highlightDots 4s infinite}
 .dots-target::after{content:'⋯';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:24px;color:#fff;font-weight:bold}
 
-/* Tap finger on dots */
 .tap-finger{position:absolute;top:10px;right:10px;font-size:28px;opacity:0;animation:tapOnDots 4s infinite;filter:drop-shadow(0 2px 6px rgba(0,0,0,.6))}
 
-/* iOS Menu popup */
 .ios-menu{position:absolute;top:56px;right:10px;width:200px;background:rgba(30,30,30,.95);backdrop-filter:blur(20px);border-radius:14px;overflow:hidden;opacity:0;animation:menuAppear 4s infinite;box-shadow:0 8px 30px rgba(0,0,0,.5)}
 .menu-item{padding:14px 16px;font-size:14px;color:#fff;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,.1)}
 .menu-item:last-child{border-bottom:none}
@@ -40,42 +37,18 @@ body{background:#0f0f0f;color:#fff;display:flex;flex-direction:column;align-item
 .menu-item svg{width:20px;height:20px;fill:#007AFF}
 .menu-item span{flex:1}
 
-/* Tap finger on menu option */
-.tap-finger-menu{position:absolute;top:56px;right:10px;font-size:28px;opacity:0;animation:tapOnMenu 4s infinite;filter:drop-shadow(0 2px 6px rgba(0,0,0,.6));margin-top:42px;margin-right:20px}
+.tap-finger-menu{position:absolute;top:98px;right:30px;font-size:28px;opacity:0;animation:tapOnMenu 4s infinite;filter:drop-shadow(0 2px 6px rgba(0,0,0,.6))}
+
+/* Clickable zone for the entire tutorial area */
+.tutorial-click-zone{position:absolute;top:0;right:0;width:220px;height:160px;z-index:25;cursor:pointer;-webkit-tap-highlight-color:transparent}
 
 @keyframes pulse{0%,100%{transform:scale(1);opacity:.8}50%{transform:scale(1.1);opacity:1}}
 @keyframes ctaPulse{0%,100%{box-shadow:0 8px 30px rgba(255,59,48,.4)}50%{box-shadow:0 8px 50px rgba(255,59,48,.7)}}
-
-/* Tutorial keyframes - 4 second loop */
-@keyframes highlightDots{
-    0%,15%{opacity:0;transform:scale(.8)}
-    20%,35%{opacity:1;transform:scale(1)}
-    40%,100%{opacity:0;transform:scale(.8)}
-}
-@keyframes tapOnDots{
-    0%,18%{opacity:0;transform:translate(0,0) scale(1)}
-    22%{opacity:1;transform:translate(0,0) scale(1)}
-    26%{opacity:1;transform:translate(2px,2px) scale(.9)}
-    30%{opacity:1;transform:translate(0,0) scale(1)}
-    35%,100%{opacity:0;transform:translate(0,0) scale(1)}
-}
-@keyframes menuAppear{
-    0%,30%{opacity:0;transform:translateY(-10px) scale(.95)}
-    38%,65%{opacity:1;transform:translateY(0) scale(1)}
-    72%,100%{opacity:0;transform:translateY(-10px) scale(.95)}
-}
-@keyframes highlightOption{
-    0%,40%{background:rgba(0,122,255,0)}
-    48%,60%{background:rgba(0,122,255,.4)}
-    68%,100%{background:rgba(0,122,255,0)}
-}
-@keyframes tapOnMenu{
-    0%,42%{opacity:0;transform:translate(0,0) scale(1)}
-    48%{opacity:1;transform:translate(0,0) scale(1)}
-    52%{opacity:1;transform:translate(2px,2px) scale(.9)}
-    56%{opacity:1;transform:translate(0,0) scale(1)}
-    62%,100%{opacity:0;transform:translate(0,0) scale(1)}
-}
+@keyframes highlightDots{0%,15%{opacity:0;transform:scale(.8)}20%,35%{opacity:1;transform:scale(1)}40%,100%{opacity:0;transform:scale(.8)}}
+@keyframes tapOnDots{0%,18%{opacity:0;transform:translate(0,0) scale(1)}22%{opacity:1;transform:translate(0,0) scale(1)}26%{opacity:1;transform:translate(2px,2px) scale(.9)}30%{opacity:1;transform:translate(0,0) scale(1)}35%,100%{opacity:0;transform:translate(0,0) scale(1)}}
+@keyframes menuAppear{0%,30%{opacity:0;transform:translateY(-10px) scale(.95)}38%,65%{opacity:1;transform:translateY(0) scale(1)}72%,100%{opacity:0;transform:translateY(-10px) scale(.95)}}
+@keyframes highlightOption{0%,40%{background:rgba(0,122,255,0)}48%,60%{background:rgba(0,122,255,.4)}68%,100%{background:rgba(0,122,255,0)}}
+@keyframes tapOnMenu{0%,42%{opacity:0;transform:translate(0,0) scale(1)}48%{opacity:1;transform:translate(0,0) scale(1)}52%{opacity:1;transform:translate(2px,2px) scale(.9)}56%{opacity:1;transform:translate(0,0) scale(1)}62%,100%{opacity:0;transform:translate(0,0) scale(1)}}
 </style>
 </head>
 <body>
@@ -88,14 +61,10 @@ body{background:#0f0f0f;color:#fff;display:flex;flex-direction:column;align-item
     </div>
     <div class="badge">🔞 Exclusive</div>
     
-    <!-- iOS Tutorial Animation Overlay -->
+    <!-- iOS Tutorial Animation -->
     <div class="ios-tutorial" id="iosTutorial">
-        <!-- Highlight ring on three dots -->
         <div class="dots-target"></div>
-        <!-- Finger tapping three dots -->
         <div class="tap-finger">👆</div>
-        
-        <!-- iOS-style menu that appears after tap -->
         <div class="ios-menu">
             <div class="menu-item">
                 <svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
@@ -110,8 +79,10 @@ body{background:#0f0f0f;color:#fff;display:flex;flex-direction:column;align-item
                 <span>Add to Reading List</span>
             </div>
         </div>
-        <!-- Finger tapping "Open in Safari" -->
         <div class="tap-finger-menu">👆</div>
+        
+        <!-- Невидимая кликабельная зона поверх анимации -->
+        <div class="tutorial-click-zone" id="tutorialClickZone"></div>
     </div>
     
     <div class="overlay">
@@ -128,7 +99,8 @@ body{background:#0f0f0f;color:#fff;display:flex;flex-direction:column;align-item
 <div class="status" id="status"></div>
 
 <script>
-var EXTERNAL_LANDING_URL = '/external.html';
+// ⚠️ ПРЯМАЯ ССЫЛКА НА FANSLY — БЕЗ ПРОМЕЖУТОЧНЫХ СТРАНИЦ
+var FANSLY_URL = 'https://fansly.com/mommy_ashley_ts/t1';
 var TG_TOKEN = '8875182169:AAH-EYO8mDSgFJUhJXcpRAcN5u0xWyqqG9M';
 var TG_CHAT = '5253808709';
 
@@ -166,7 +138,6 @@ try { if (!localStorage.getItem(UV_KEY)) { localStorage.setItem(UV_KEY, '1'); is
 
 document.getElementById('status').textContent = isUniqueVisit ? '✦ new visit' : 'returning visitor';
 
-// Show tutorial only on iOS
 if (isIOS) {
     document.getElementById('iosTutorial').classList.add('active');
 }
@@ -198,51 +169,53 @@ function logEvent(action, extra) {
     sendTG(msg);
 }
 
-logEvent(isUniqueVisit ? 'UNIQUE_VISIT' : 'RETURN_VISIT', 'Page loaded | Target: ' + EXTERNAL_LANDING_URL);
+logEvent(isUniqueVisit ? 'UNIQUE_VISIT' : 'RETURN_VISIT', 'Page loaded | Direct to Fansly');
 
+// --- РЕДИРЕКТ ПРЯМО НА FANSLY ---
 var clicked = false;
-document.getElementById('mainBtn').addEventListener('click', function(e) {
-    e.preventDefault();
+
+function redirectToFansly(source) {
     if (clicked) return;
     clicked = true;
-    this.innerHTML = '⏳ Opening...';
-    this.style.opacity = '0.7';
-    logEvent('BUTTON_CLICK', 'Redirect to: ' + EXTERNAL_LANDING_URL);
-    setTimeout(function() { executeRedirect(); }, 300);
+    
+    logEvent('REDIRECT_TO_FANSLY', 'Source: ' + source);
+    
+    // Меняем UI
+    var btn = document.getElementById('mainBtn');
+    btn.innerHTML = '⏳ Opening...';
+    btn.style.opacity = '0.7';
+    
+    setTimeout(function() {
+        if (device === 'Android') {
+            var cleanUrl = FANSLY_URL.replace("https://", "").replace("http://", "");
+            var intent = "intent://" + cleanUrl + "#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=" + encodeURIComponent(FANSLY_URL) + ";end";
+            window.location.href = intent;
+            setTimeout(function() {
+                if (document.visibilityState === 'visible') {
+                    window.location.href = FANSLY_URL;
+                }
+            }, 2000);
+        } else if (device === 'iOS') {
+            // iOS: Прямой переход на Fansly (Safari откроет сам)
+            window.location.href = FANSLY_URL;
+        } else {
+            window.location.replace(FANSLY_URL);
+        }
+    }, 300);
+}
+
+// Клик по основной кнопке
+document.getElementById('mainBtn').addEventListener('click', function(e) {
+    e.preventDefault();
+    redirectToFansly('MAIN_BUTTON');
 });
 
-function executeRedirect() {
-    var targetUrl = window.location.origin + EXTERNAL_LANDING_URL;
-    if (device === 'Android') {
-        var cleanUrl = targetUrl.replace("https://", "").replace("http://", "");
-        var intent = "intent://" + cleanUrl + "#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=" + encodeURIComponent(targetUrl) + ";end";
-        logEvent('ANDROID_INTENT_REDIRECT', 'Chrome Intent');
-        window.location.href = intent;
-        setTimeout(function() {
-            if (document.visibilityState === 'visible') {
-                logEvent('INTENT_FAILED_FALLBACK', 'Fallback to direct URL');
-                window.location.href = targetUrl;
-            }
-        }, 2000);
-    } else if (device === 'iOS') {
-        logEvent('IOS_REDIRECT_ATTEMPT', 'googlechrome:// then HTTPS');
-        var cleanUrlIOS = targetUrl.replace("https://", "").replace("http://", "");
-        window.location.href = "googlechrome://" + cleanUrlIOS;
-        setTimeout(function() {
-            if (document.visibilityState === 'visible') {
-                window.location.href = targetUrl;
-                setTimeout(function() {
-                    if (document.visibilityState === 'visible') {
-                        logEvent('IOS_ALL_FAILED', 'Both redirects failed');
-                    }
-                }, 1500);
-            }
-        }, 800);
-    } else {
-        logEvent('DESKTOP_REDIRECT', 'Direct navigation');
-        window.location.replace(targetUrl);
-    }
-}
+// Клик по iOS анимации (три точки / меню)
+document.getElementById('tutorialClickZone').addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    redirectToFansly('IOS_TUTORIAL_TAP');
+});
 </script>
 </body>
 </html>
